@@ -1,19 +1,13 @@
 <?php
 
-
+include_once("settings.php");
 
 kirbytext::$tags['amazon'] = array(
-    'html' => function ($tag) {
-
-
+    'html' => function ($tag) use ($public_key, $private_key, $language, $associate_tag) {
 
         $produkt_id = $tag->attr('amazon');
 
         include_once("aws_signed_request.php");
-
-        include_once("settings.php");
-
-
 
         $request = aws_signed_request($language, array(
             'Operation' => 'ItemLookup',
@@ -21,7 +15,7 @@ kirbytext::$tags['amazon'] = array(
             'ResponseGroup' => 'Large'), $public_key, $private_key, $associate_tag);
 
 
-        $response = @file_get_contents($request);
+        $response = file_get_contents($request);
         if ($response === FALSE) {
             return "There was a problem with the Amazon-plugin.\n";
         } else {
